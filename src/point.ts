@@ -4,6 +4,8 @@ export interface BasicPoint {
   y: number;
   pressure: number;
   time: number;
+  azimuth: number;
+  altitude: number;
 }
 
 export class Point implements BasicPoint {
@@ -11,8 +13,17 @@ export class Point implements BasicPoint {
   public y: number;
   public pressure: number;
   public time: number;
+  public azimuth: number;
+  public altitude: number;
 
-  constructor(x: number, y: number, pressure?: number, time?: number) {
+  constructor(
+    x: number,
+    y: number,
+    pressure?: number,
+    time?: number,
+    azimuth?: number,
+    altitude?: number,
+  ) {
     if (isNaN(x) || isNaN(y)) {
       throw new Error(`Point is invalid: (${x}, ${y})`);
     }
@@ -20,6 +31,8 @@ export class Point implements BasicPoint {
     this.y = +y;
     this.pressure = pressure || 0;
     this.time = time || Date.now();
+    this.azimuth = azimuth || 0;
+    this.altitude = altitude || 0;
   }
 
   public distanceTo(start: BasicPoint): number {
@@ -33,7 +46,9 @@ export class Point implements BasicPoint {
       this.x === other.x &&
       this.y === other.y &&
       this.pressure === other.pressure &&
-      this.time === other.time
+      this.time === other.time &&
+      this.azimuth === other.azimuth &&
+      this.altitude === other.altitude
     );
   }
 

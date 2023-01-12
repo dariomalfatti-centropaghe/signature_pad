@@ -48,6 +48,11 @@ export interface PointGroup extends PointGroupOptions {
   points: BasicPoint[];
 }
 
+interface PointerEventBiometric extends PointerEvent {
+  azimuthAngle?: number;
+  altitudeAngle?: number;
+}
+
 export default class SignaturePad extends SignatureEventTarget {
   // Public stuff
   public dotSize: number;
@@ -364,7 +369,10 @@ export default class SignaturePad extends SignatureEventTarget {
         ? (event as Touch).force
         : 0;
 
-    const point = this._createPoint(x, y, pressure);
+    const azimuth = (event as PointerEventBiometric).azimuthAngle || 0;
+    const altitude = (event as PointerEventBiometric).altitudeAngle || 0;
+
+    const point = this._createPoint(x, y, pressure, azimuth, altitude);
     const lastPointGroup = this._data[this._data.length - 1];
     const lastPoints = lastPointGroup.points;
     const lastPoint =
@@ -389,6 +397,8 @@ export default class SignaturePad extends SignatureEventTarget {
         x: point.x,
         y: point.y,
         pressure: point.pressure,
+        azimuth: point.azimuth,
+        altitude: point.altitude,
       });
     }
 
@@ -434,7 +444,13 @@ export default class SignaturePad extends SignatureEventTarget {
     this._ctx.fillStyle = options.penColor;
   }
 
-  private _createPoint(x: number, y: number, pressure: number): Point {
+  private _createPoint(
+    x: number,
+    y: number,
+    pressure: number,
+    azimuth: number,
+    altitude: number,
+  ): Point {
     const rect = this.canvas.getBoundingClientRect();
 
     return new Point(
@@ -442,6 +458,8 @@ export default class SignaturePad extends SignatureEventTarget {
       y - rect.top,
       pressure,
       new Date().getTime(),
+      azimuth,
+      altitude,
     );
   }
 

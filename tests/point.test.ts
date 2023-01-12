@@ -67,6 +67,22 @@ describe('#equals', () => {
 
     expect(a.equals(b)).toBe(false);
   });
+
+  it("returns false if points have the different 'azimuth' attributes", () => {
+    const now = Date.now();
+    const a = new Point(1, 1, 0, now, 0, 0);
+    const b = new Point(1, 1, 0, now, 1, 0);
+
+    expect(a.equals(b)).toBe(false);
+  });
+
+  it("returns false if points have the different 'altitude' attributes", () => {
+    const now = Date.now();
+    const a = new Point(1, 1, 0, now, 0, 0);
+    const b = new Point(1, 1, 0, now, 0, 1);
+
+    expect(a.equals(b)).toBe(false);
+  });
 });
 
 describe('#velocityFrom', () => {

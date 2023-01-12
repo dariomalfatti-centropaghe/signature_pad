@@ -1,6 +1,6 @@
 /*!
  * Signature Pad v4.1.4 | https://github.com/szimek/signature_pad
- * (c) 2022 Szymon Nowak | Released under the MIT license
+ * (c) 2023 Szymon Nowak | Released under the MIT license
  */
 
 (function (global, factory) {
@@ -10,7 +10,7 @@
 })(this, (function () { 'use strict';
 
     class Point {
-        constructor(x, y, pressure, time) {
+        constructor(x, y, pressure, time, azimuth, altitude) {
             if (isNaN(x) || isNaN(y)) {
                 throw new Error(`Point is invalid: (${x}, ${y})`);
             }
@@ -18,6 +18,8 @@
             this.y = +y;
             this.pressure = pressure || 0;
             this.time = time || Date.now();
+            this.azimuth = azimuth || 0;
+            this.altitude = altitude || 0;
         }
         distanceTo(start) {
             return Math.sqrt(Math.pow(this.x - start.x, 2) + Math.pow(this.y - start.y, 2));
@@ -26,7 +28,9 @@
             return (this.x === other.x &&
                 this.y === other.y &&
                 this.pressure === other.pressure &&
-                this.time === other.time);
+                this.time === other.time &&
+                this.azimuth === other.azimuth &&
+                this.altitude === other.altitude);
         }
         velocityFrom(start) {
             return this.time !== start.time
@@ -353,7 +357,9 @@
                 : event.force !== undefined
                     ? event.force
                     : 0;
-            const point = this._createPoint(x, y, pressure);
+            const azimuth = event.azimuthAngle || 0;
+            const altitude = event.altitudeAngle || 0;
+            const point = this._createPoint(x, y, pressure, azimuth, altitude);
             const lastPointGroup = this._data[this._data.length - 1];
             const lastPoints = lastPointGroup.points;
             const lastPoint = lastPoints.length > 0 && lastPoints[lastPoints.length - 1];
@@ -374,6 +380,8 @@
                     x: point.x,
                     y: point.y,
                     pressure: point.pressure,
+                    azimuth: point.azimuth,
+                    altitude: point.altitude,
                 });
             }
             this.dispatchEvent(new CustomEvent('afterUpdateStroke', { detail: event }));
@@ -405,9 +413,9 @@
             this._lastWidth = (options.minWidth + options.maxWidth) / 2;
             this._ctx.fillStyle = options.penColor;
         }
-        _createPoint(x, y, pressure) {
+        _createPoint(x, y, pressure, azimuth, altitude) {
             const rect = this.canvas.getBoundingClientRect();
-            return new Point(x - rect.left, y - rect.top, pressure, new Date().getTime());
+            return new Point(x - rect.left, y - rect.top, pressure, new Date().getTime(), azimuth, altitude);
         }
         _addPoint(point, options) {
             const { _lastPoints } = this;
