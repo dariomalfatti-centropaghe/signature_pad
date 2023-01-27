@@ -23,8 +23,7 @@
     "serve": "serve -l 9000 docs",
     "start": "yarn run build && yarn run serve",
     "test": "jest --coverage",
-    "update-docs": "yarn run cp-cli dist/signature_pad.umd.js docs/js/signature_pad.umd.js",
-    "prepare": "husky install"
+    "update-docs": "yarn run cp-cli dist/signature_pad.umd.js docs/js/signature_pad.umd.js"
   },
   "repository": {
     "type": "git",
